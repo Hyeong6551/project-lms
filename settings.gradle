@@ -1,0 +1,9 @@
+rootProject.name = 'kube_MSA_sample'
+
+include 'eureka-server'
+include 'gateway'
+include 'notice-service'
+include 'lecture-service'
+include 'grading-service'
+include 'exam-service'
+include 'admin-service'
