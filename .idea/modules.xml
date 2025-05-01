@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/eureka-server/kube_MSA_sample.eureka-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/eureka-server/kube_MSA_sample.eureka-server.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/exam-service/kube_MSA_sample.exam-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/exam-service/kube_MSA_sample.exam-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/gateway/kube_MSA_sample.gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/gateway/kube_MSA_sample.gateway.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/grading-service/kube_MSA_sample.grading-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/grading-service/kube_MSA_sample.grading-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/lecture-service/kube_MSA_sample.lecture-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/lecture-service/kube_MSA_sample.lecture-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/notice-service/kube_MSA_sample.notice-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/notice-service/kube_MSA_sample.notice-service.main.iml" />
     </modules>
