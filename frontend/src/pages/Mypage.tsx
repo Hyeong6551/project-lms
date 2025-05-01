@@ -3,7 +3,7 @@ import DaumPostcode from 'react-daum-postcode';
 import {
     Box, Typography, TextField, Button, List,
     ListItem, ListItemButton, ListItemText, Paper, Container,
-    Chip, Avatar, MenuItem, Modal
+    Chip, Avatar, MenuItem, Modal, CircularProgress
 } from '@mui/material';
 import api from '../api/axios';
 
@@ -14,11 +14,32 @@ interface Completion {
     completedAt: string;
 }
 
+interface UserInfo {
+    username?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    addressDetail?: string;
+    birthYear?: string;
+    birthMonth?: string;
+    birthDay?: string;
+    birthDate?: string;
+    currentPassword?: string;
+    newPassword?: string;
+    confirmNewPassword?: string;
+}
+
 const Mypage: React.FC = () => {
-    const [userInfo, setUserInfo] = useState<any>({});
+    const [userInfo, setUserInfo] = useState<UserInfo>({});
     const [completionHistory, setCompletionHistory] = useState<Completion[]>([]);
     const [view, setView] = useState<'info' | 'edit' | 'history'>('info');
     const [addressModalOpen, setAddressModalOpen] = useState(false);
+    const [phoneVerified, setPhoneVerified] = useState(false);
+    const [authCode, setAuthCode] = useState('');
+    const [sent, setSent] = useState(false);
+    const [sending, setSending] = useState(false);
+    const [originalPhone, setOriginalPhone] = useState('');
 
     const fetchUserInfo = async () => {
         try {
@@ -28,6 +49,7 @@ const Mypage: React.FC = () => {
             });
 
             const birth = res.data.birthDate?.split('-') || [];
+            setOriginalPhone(res.data.phone || '');
 
             setUserInfo({
                 ...res.data,
@@ -71,7 +93,7 @@ const Mypage: React.FC = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
         const { name, value } = e.target;
-        setUserInfo((prev: any) => ({
+        setUserInfo((prev: UserInfo) => ({
             ...prev,
             [name!]: value
         }));
@@ -79,11 +101,70 @@ const Mypage: React.FC = () => {
 
     const handleAddressComplete = (data: any) => {
         const fullAddress = data.roadAddress || data.jibunAddress;
-        setUserInfo(prev => ({ ...prev, address: fullAddress }));
+        setUserInfo((prev: UserInfo) => ({ ...prev, address: fullAddress }));
         setAddressModalOpen(false); // 모달 닫기
     };
 
+    const sendAuthCode = async () => {
+        try {
+            setSending(true);
+            const fullPhone = userInfo.phone?.replace(/-/g, '');  // 하이픈 제거
+
+            if (!fullPhone || fullPhone.length !== 11) {
+                alert('올바른 전화번호를 입력해주세요.');
+                return;
+            }
+
+            const response = await api.post('/sms/send', { phone: fullPhone });
+            console.log(response.data); // 응답 확인
+
+            if (response.data) {
+                alert('인증번호가 발송되었습니다.');
+                setSent(true);  // 인증번호 발송 후 입력 필드 보이기
+                setAuthCode(''); // 인증번호 초기화
+            } else {
+                alert('인증번호 발송 실패1111');
+            }
+
+        } catch (error) {
+            console.error('SMS 발송 실패', error);
+            alert('SMS 발송에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        } finally {
+            setSending(false);  // 인증 발송 중 상태 해제
+        }
+    };
+
+    const verifyAuthCode = async () => {
+        try {
+            const fullPhone = userInfo.phone?.replace(/-/g, '');
+            if (!fullPhone || fullPhone.length !== 11) {
+                alert('올바른 전화번호를 입력해주세요.');
+                return;
+            }
+
+            const response = await api.post('/sms/verify', {
+                phone: fullPhone,
+                code: authCode, // 입력된 인증번호
+            });
+
+            if (response.data.success) {
+                alert('인증에 성공했습니다.');
+                setPhoneVerified(true);  // 인증 성공 후 저장 가능
+            } else {
+                alert('인증번호가 일치하지 않습니다.');
+            }
+        } catch (error) {
+            console.error('인증 실패', error);
+            alert('인증 요청에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        }
+    };
+
     const handleUpdate = async () => {
+        if (userInfo.phone !== originalPhone && !phoneVerified) {
+            alert('전화번호를 변경하려면 인증이 필요합니다.');
+            return;
+        }
+
         const {
             name, email, phone, address, addressDetail,
             birthYear, birthMonth, birthDay,
@@ -116,7 +197,11 @@ const Mypage: React.FC = () => {
                 },
             });
 
-            await fetchUserInfo(); // ✅ 변경 즉시 반영
+            setSent(false);
+            setAuthCode('');
+            setPhoneVerified(false);
+            await fetchUserInfo();
+
             alert('정보가 수정되었습니다.');
             setView('info');
         } catch (err: any) {
@@ -230,7 +315,22 @@ const Mypage: React.FC = () => {
                     </TextField>
                 </Box>
 
-                <TextField label="전화번호" name="phone" fullWidth value={userInfo.phone || ''} onChange={handleChange} margin="normal" />
+                <Typography variant="h6">전화번호 인증</Typography>
+                <TextField label="전화번호" fullWidth value={userInfo.phone || ''} onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })} margin="normal" variant="outlined" />
+
+                <Button variant="contained" color="primary" onClick={sendAuthCode} disabled={sending || sent} sx={{ mt: 2 }}>
+                    {sending ? <CircularProgress size={24} /> : '인증번호 발송'}
+                </Button>
+
+                {sent && (
+                    <Box sx={{ mt: 3 }}>
+                        <TextField label="인증번호" fullWidth value={authCode} onChange={(e) => setAuthCode(e.target.value)} margin="normal" variant="outlined" />
+                        <Button variant="contained" color="primary" onClick={verifyAuthCode} sx={{ mt: 2 }}>
+                            인증번호 확인
+                        </Button>
+                    </Box>
+                )}
+
                 <TextField label="이메일" name="email" fullWidth value={userInfo.email || ''} onChange={handleChange} margin="normal" />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <TextField label="주소" name="address" fullWidth value={userInfo.address || ''} onChange={handleChange} margin="normal" />
@@ -242,10 +342,7 @@ const Mypage: React.FC = () => {
                     <Button variant="contained" color="primary" onClick={handleUpdate}>저장</Button>
                     <Button variant="outlined" onClick={() => setView('info')}>취소</Button>
                 </Box>
-                <Modal
-                    open={addressModalOpen}
-                    onClose={() => setAddressModalOpen(false)}
-                >
+                <Modal open={addressModalOpen} onClose={() => setAddressModalOpen(false)}>
                     <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'white', p: 2 }}>
                         <DaumPostcode onComplete={handleAddressComplete} />
                     </Box>

@@ -1,6 +1,5 @@
-
 import React from 'react';
-import './LectureFilterBar.css';
+import '../styles/LectureFilterBar.css';
 
 interface LectureFilterBarProps {
     selectedCategory: string;

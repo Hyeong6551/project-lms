@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom';
 import DaumPostcode from 'react-daum-postcode';
 import { useNavigate } from 'react-router-dom';
 import { Visibility, VisibilityOff, CheckCircle, Cancel } from '@mui/icons-material';
-import './Auth.css';
+import '../styles/Auth.css';
 
 // 유틸리티 함수와 타입 가져오기
 import {

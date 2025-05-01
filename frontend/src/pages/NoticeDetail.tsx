@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from '../api/axios';
 import { Box, Typography, Divider, Button, Container } from '@mui/material';
-import './Notice.css';
+import '../styles/Notice.css';
 
 interface Notice {
     id: number;

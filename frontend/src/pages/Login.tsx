@@ -4,7 +4,7 @@ import { TextField, Button, Container, Link as MuiLink } from '@mui/material';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
-import './Auth.css';
+import '../styles/Auth.css';
 
 interface Props {
     onLogin: (username: string, role: string) => void;

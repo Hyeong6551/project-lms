@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate  } from 'react-router-dom';
 import axios from 'axios';
-import './LectureList.css';
-import './LectureFilterBar';
+import '../styles/LectureList.css'; 
+import '../styles/LectureFilterBar.css';
 import LectureFilterBar from "./LectureFilterBar.tsx";
 
 

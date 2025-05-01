@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, Container } from '@mui/material';
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
-import './Notice.css';
+import '../styles/Notice.css';
 
 const NoticeWrite: React.FC = () => {
     const [title, setTitle] = useState('');

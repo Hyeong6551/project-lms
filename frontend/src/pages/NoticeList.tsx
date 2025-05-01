@@ -5,7 +5,7 @@ import {
     Box, Typography, List, ListItemText, Divider, ListItemButton, Button, Container
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import './Notice.css';
+import '../styles/Notice.css';
 
 const NoticeList: React.FC = () => {
     const [notices, setNotices] = useState<Notice[]>([]);

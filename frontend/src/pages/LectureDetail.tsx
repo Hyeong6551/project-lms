@@ -6,7 +6,7 @@ import QnaSection from '../components/lecture/QnaSection';
 import ReviewSection from '../components/lecture/ReviewSection';
 import ContentSection from '../components/lecture/ContentSection';
 import ResourcesSection from '../components/lecture/ResourcesSection.tsx';
-import './LectureDetail.css';
+import '../styles/LectureDetail.css';
 import {
     Lecture,
     Notice,

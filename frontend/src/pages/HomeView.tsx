@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';
-import './HomeView.css';
+import '../styles/HomeView.css';
 
 
 import axios from '../api/axios'; // 경로는 프로젝트 구조에 맞게
