@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import DaumPostcode from 'react-daum-postcode';
 import {
     Box, Typography, TextField, Button, List,
     ListItem, ListItemButton, ListItemText, Paper, Container,
-    Chip, Avatar, MenuItem
+    Chip, Avatar, MenuItem, Modal
 } from '@mui/material';
 import api from '../api/axios';
 
@@ -17,6 +18,7 @@ const Mypage: React.FC = () => {
     const [userInfo, setUserInfo] = useState<any>({});
     const [completionHistory, setCompletionHistory] = useState<Completion[]>([]);
     const [view, setView] = useState<'info' | 'edit' | 'history'>('info');
+    const [addressModalOpen, setAddressModalOpen] = useState(false);
 
     const fetchUserInfo = async () => {
         try {
@@ -34,7 +36,8 @@ const Mypage: React.FC = () => {
                 birthDay: birth[2] || '',
                 currentPassword: '',
                 newPassword: '',
-                confirmNewPassword: ''
+                confirmNewPassword: '',
+                addressDetail: '',
             });
         } catch (err) {
             console.error('❌ 사용자 정보 불러오기 실패', err);
@@ -74,9 +77,15 @@ const Mypage: React.FC = () => {
         }));
     };
 
+    const handleAddressComplete = (data: any) => {
+        const fullAddress = data.roadAddress || data.jibunAddress;
+        setUserInfo(prev => ({ ...prev, address: fullAddress }));
+        setAddressModalOpen(false); // 모달 닫기
+    };
+
     const handleUpdate = async () => {
         const {
-            name, email, phone, address,
+            name, email, phone, address, addressDetail,
             birthYear, birthMonth, birthDay,
             currentPassword, newPassword, confirmNewPassword
         } = userInfo;
@@ -91,7 +100,9 @@ const Mypage: React.FC = () => {
             birthDate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
         }
 
-        const payload: any = { name, email, phone, address };
+        const fullAddress = `${address} ${addressDetail || ''}`.trim();
+
+        const payload: any = { name, email, phone, address: fullAddress };
         if (birthDate) payload.birthDate = birthDate;
         if (newPassword) {
             payload.currentPassword = currentPassword;
@@ -221,12 +232,24 @@ const Mypage: React.FC = () => {
 
                 <TextField label="전화번호" name="phone" fullWidth value={userInfo.phone || ''} onChange={handleChange} margin="normal" />
                 <TextField label="이메일" name="email" fullWidth value={userInfo.email || ''} onChange={handleChange} margin="normal" />
-                <TextField label="주소" name="address" fullWidth value={userInfo.address || ''} onChange={handleChange} margin="normal" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <TextField label="주소" name="address" fullWidth value={userInfo.address || ''} onChange={handleChange} margin="normal" />
+                    <Button variant="contained" onClick={() => setAddressModalOpen(true)} sx={{ mt: 2 }}>주소 검색</Button>
+                </div>
+                <TextField label="상세 주소" name="addressDetail" fullWidth value={userInfo.addressDetail || ''} onChange={handleChange} margin="normal" />
 
-                <Box mt={2} display="flex" gap={2}>
+                <Box mt={9} display="flex" gap={2}>
                     <Button variant="contained" color="primary" onClick={handleUpdate}>저장</Button>
                     <Button variant="outlined" onClick={() => setView('info')}>취소</Button>
                 </Box>
+                <Modal
+                    open={addressModalOpen}
+                    onClose={() => setAddressModalOpen(false)}
+                >
+                    <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'white', p: 2 }}>
+                        <DaumPostcode onComplete={handleAddressComplete} />
+                    </Box>
+                </Modal>
             </Box>
         );
     };
@@ -242,7 +265,7 @@ const Mypage: React.FC = () => {
                         아직 이수한 강의가 없습니다.
                     </Typography>
                 ) : (
-                    Object.entries(groupedCompletions).map(([lectureId, completions], index) => (
+                    Object.entries(groupedCompletions).map(([lectureId, completions]) => (
                         <Box key={lectureId} sx={{ mb: 3 }}>
                             <Box sx={{
                                 display: 'flex',
