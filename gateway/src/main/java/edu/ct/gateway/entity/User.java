@@ -35,8 +35,8 @@
         @Column(nullable = false)
         private String address;
 
-        @Column(nullable = false)
-        private LocalDate birthDate; // 생년월일 필드 추가
+        @Column(nullable = false, name = "birth_date")
+        private LocalDate birthDate;
 
         @Column(nullable = false)
         private String role = "USER"; // 기본값은 일반 사용자

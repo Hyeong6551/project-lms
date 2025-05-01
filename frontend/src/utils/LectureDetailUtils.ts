@@ -121,7 +121,7 @@ export const fetchNotices = async (lectureId: number | string): Promise<Notice[]
     try {
         const res = await axios.get(`/api/lectures/${lectureId}/notices`);
         // 임시로 조회수 추가
-        return res.data.map((notice: Notice, index: number) => ({
+        return res.data.map((notice: Notice) => ({
             ...notice, 
             views: Math.floor(Math.random() * 100) + 10
         }));

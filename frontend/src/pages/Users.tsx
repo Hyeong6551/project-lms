@@ -20,11 +20,8 @@ import {
   IconButton,
   Typography,
   Box,
-  Paper,
-  Theme,
   Tabs,
   Tab,
-  Chip,
   List,
   ListItem,
   ListItemText,
@@ -40,7 +37,6 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import api from '../api/axios';
 import '../styles/admin.css';
-import { SxProps } from '@mui/system';
 
 interface User {
   id: number;
