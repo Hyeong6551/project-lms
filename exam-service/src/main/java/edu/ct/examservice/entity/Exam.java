@@ -3,13 +3,13 @@ package edu.ct.examservice.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-
 public class Exam {
 
     @Id
@@ -27,7 +27,7 @@ public class Exam {
     private LocalDateTime endTime;
 
     @Lob
-    @Column(name = "question")
+    @Column(name = "question", columnDefinition = "LONGTEXT")
     private String question;
 
 }
